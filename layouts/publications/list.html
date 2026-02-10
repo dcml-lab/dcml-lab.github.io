@@ -23,13 +23,7 @@
       {{ range $yearPubs }}
       <article class="publication">
         <h3 class="publication__title">
-          {{ if .Params.url }}
-          <a href="{{ .Params.url }}" target="_blank" rel="noopener">{{ .Title }}</a>
-          {{ else if .Params.pdf }}
-          <a href="{{ .Params.pdf }}" target="_blank" rel="noopener">{{ .Title }}</a>
-          {{ else }}
-          {{ .Title }}
-          {{ end }}
+          <a href="{{ .Permalink }}">{{ .Title }}</a>
         </h3>
         <p class="publication__authors">{{ .Params.authors }}</p>
         <p class="publication__venue">{{ .Params.venue }}{{ with .Params.year }}, {{ . }}{{ end }}</p>
