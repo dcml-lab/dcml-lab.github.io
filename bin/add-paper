@@ -1,0 +1,243 @@
+#!/usr/bin/env python3
+"""
+add-paper: Add a publication to the dotML website from an arXiv link.
+
+Usage:
+    ./bin/add-paper --arxiv https://arxiv.org/abs/2309.12345 [--github URL] [--video URL] [--project]
+
+Options:
+    --arxiv URL     arXiv paper URL (required)
+    --github URL    GitHub repository URL
+    --video URL     Video URL (YouTube, etc.)
+    --project       Also create a project page for this paper
+"""
+
+import argparse
+import re
+import sys
+import urllib.request
+import xml.etree.ElementTree as ET
+from datetime import datetime
+from pathlib import Path
+import unicodedata
+
+SCRIPT_DIR = Path(__file__).parent
+CONTENT_DIR = SCRIPT_DIR.parent / "content"
+PUBLICATIONS_DIR = CONTENT_DIR / "publications"
+RESEARCH_DIR = CONTENT_DIR / "research"
+
+
+def slugify(text):
+    """Convert text to URL-friendly slug."""
+    text = unicodedata.normalize('NFKD', text)
+    text = text.encode('ascii', 'ignore').decode('ascii')
+    text = re.sub(r'[^\w\s-]', '', text.lower())
+    text = re.sub(r'[-\s]+', '-', text).strip('-')
+    return text[:50]
+
+
+def extract_arxiv_id(url):
+    """Extract arXiv ID from URL."""
+    patterns = [
+        r'arxiv\.org/abs/(\d+\.\d+)',
+        r'arxiv\.org/pdf/(\d+\.\d+)',
+        r'^(\d+\.\d+)$',
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    raise ValueError(f"Could not extract arXiv ID from: {url}")
+
+
+def fetch_arxiv_metadata(arxiv_id):
+    """Fetch paper metadata from arXiv API."""
+    api_url = f"http://export.arxiv.org/api/query?id_list={arxiv_id}"
+    
+    try:
+        with urllib.request.urlopen(api_url, timeout=30) as response:
+            xml_data = response.read()
+    except Exception as e:
+        raise RuntimeError(f"Failed to fetch arXiv data: {e}")
+    
+    # Parse XML
+    root = ET.fromstring(xml_data)
+    ns = {'atom': 'http://www.w3.org/2005/Atom'}
+    
+    entry = root.find('atom:entry', ns)
+    if entry is None:
+        raise ValueError(f"No paper found for arXiv ID: {arxiv_id}")
+    
+    # Extract metadata
+    title = entry.find('atom:title', ns).text.strip()
+    title = re.sub(r'\s+', ' ', title)  # Normalize whitespace
+    
+    abstract = entry.find('atom:summary', ns).text.strip()
+    abstract = re.sub(r'\s+', ' ', abstract)
+    
+    authors = []
+    for author in entry.findall('atom:author', ns):
+        name = author.find('atom:name', ns).text
+        authors.append(name)
+    
+    published = entry.find('atom:published', ns).text
+    year = datetime.fromisoformat(published.replace('Z', '+00:00')).year
+    
+    # Get categories for venue
+    categories = [cat.get('term') for cat in entry.findall('atom:category', ns)]
+    primary_category = categories[0] if categories else 'cs.LG'
+    
+    return {
+        'arxiv_id': arxiv_id,
+        'title': title,
+        'authors': authors,
+        'abstract': abstract,
+        'year': year,
+        'category': primary_category,
+        'arxiv_url': f"https://arxiv.org/abs/{arxiv_id}",
+        'pdf_url': f"https://arxiv.org/pdf/{arxiv_id}.pdf",
+    }
+
+
+def generate_bibtex(metadata, slug):
+    """Generate BibTeX entry."""
+    first_author_last = metadata['authors'][0].split()[-1]
+    bibtex_key = f"{first_author_last.lower()}{metadata['year']}{slug[:10]}"
+    
+    authors_bibtex = " and ".join(metadata['authors'])
+    
+    return f"""@article{{{bibtex_key},
+  title={{{metadata['title']}}},
+  author={{{authors_bibtex}}},
+  journal={{arXiv preprint arXiv:{metadata['arxiv_id']}}},
+  year={{{metadata['year']}}}
+}}"""
+
+
+def create_publication(metadata, github_url=None, video_url=None):
+    """Create publication markdown file."""
+    slug = slugify(metadata['title'])
+    filepath = PUBLICATIONS_DIR / f"{slug}.md"
+    
+    if filepath.exists():
+        print(f"⚠️  Publication already exists: {filepath}")
+        return filepath, slug
+    
+    authors_str = ", ".join(metadata['authors'])
+    
+    content = f"""---
+title: "{metadata['title']}"
+authors: "{authors_str}"
+venue: "arXiv preprint"
+year: {metadata['year']}
+arxiv: "{metadata['arxiv_url']}"
+pdf: "{metadata['pdf_url']}"
+"""
+    
+    if github_url:
+        content += f'code: "{github_url}"\n'
+    if video_url:
+        content += f'video: "{video_url}"\n'
+    
+    content += """---
+"""
+    
+    filepath.write_text(content)
+    print(f"✅ Created publication: {filepath}")
+    return filepath, slug
+
+
+def create_project_page(metadata, slug, github_url=None, video_url=None):
+    """Create a project page for the paper."""
+    project_dir = RESEARCH_DIR / slug
+    project_dir.mkdir(parents=True, exist_ok=True)
+    filepath = project_dir / "index.md"
+    
+    if filepath.exists():
+        print(f"⚠️  Project page already exists: {filepath}")
+        return filepath
+    
+    # Format authors with affiliations placeholder
+    authors_yaml = "\n".join([
+        f'  - name: "{author}"\n    equal: false'
+        for author in metadata['authors']
+    ])
+    
+    bibtex = generate_bibtex(metadata, slug)
+    
+    content = f'''---
+title: "{metadata['title']}"
+description: "{metadata['abstract'][:200]}..."
+weight: 10
+authors:
+{authors_yaml}
+affiliations:
+  - "Harvard University"
+venue: "arXiv {metadata['year']}"
+arxiv: "{metadata['arxiv_url']}"
+pdf: "{metadata['pdf_url']}"
+'''
+    
+    if github_url:
+        content += f'code: "{github_url}"\n'
+    if video_url:
+        content += f'video: "{video_url}"\n'
+    
+    content += f'''
+abstract: |
+  {metadata['abstract']}
+
+bibtex: |
+  {bibtex}
+---
+
+## Method
+
+*Add method description and figures here.*
+
+## Results
+
+*Add results and visualizations here.*
+'''
+    
+    filepath.write_text(content)
+    print(f"✅ Created project page: {filepath}")
+    return filepath
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Add a paper to the website from arXiv")
+    parser.add_argument('--arxiv', required=True, help='arXiv URL or ID')
+    parser.add_argument('--github', help='GitHub repository URL')
+    parser.add_argument('--video', help='Video URL')
+    parser.add_argument('--project', action='store_true', help='Also create a project page')
+    
+    args = parser.parse_args()
+    
+    try:
+        # Extract arXiv ID
+        arxiv_id = extract_arxiv_id(args.arxiv)
+        print(f"📄 Fetching metadata for arXiv:{arxiv_id}...")
+        
+        # Fetch metadata
+        metadata = fetch_arxiv_metadata(arxiv_id)
+        print(f"   Title: {metadata['title']}")
+        print(f"   Authors: {', '.join(metadata['authors'][:3])}{'...' if len(metadata['authors']) > 3 else ''}")
+        print(f"   Year: {metadata['year']}")
+        
+        # Create publication
+        pub_path, slug = create_publication(metadata, args.github, args.video)
+        
+        # Create project page if requested
+        if args.project:
+            create_project_page(metadata, slug, args.github, args.video)
+        
+        print("\n🎉 Done! Run 'hugo server' to preview changes.")
+        
+    except Exception as e:
+        print(f"❌ Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()

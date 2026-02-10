@@ -1,0 +1,94 @@
+#!/usr/bin/env python3
+"""
+add-news: Add a news item to the dotML website.
+
+Usage:
+    ./bin/add-news "Three new students joined the lab!"
+    ./bin/add-news --title "Paper accepted" --body "Our paper was accepted to NeurIPS!"
+"""
+
+import argparse
+import sys
+from datetime import datetime
+from pathlib import Path
+import re
+import unicodedata
+
+SCRIPT_DIR = Path(__file__).parent
+NEWS_DIR = SCRIPT_DIR.parent / "content" / "news"
+
+
+def slugify(text):
+    """Convert text to URL-friendly slug."""
+    text = unicodedata.normalize('NFKD', text)
+    text = text.encode('ascii', 'ignore').decode('ascii')
+    text = re.sub(r'[^\w\s-]', '', text.lower())
+    text = re.sub(r'[-\s]+', '-', text).strip('-')
+    return text[:40]
+
+
+def create_news(message, title=None, inline=True):
+    """Create a news markdown file."""
+    today = datetime.now()
+    date_str = today.strftime("%Y-%m-%d")
+    
+    # Generate title and slug
+    if title:
+        display_title = title
+    else:
+        display_title = message[:50] + "..." if len(message) > 50 else message
+    
+    slug = slugify(display_title)
+    filename = f"{date_str}-{slug}.md"
+    filepath = NEWS_DIR / filename
+    
+    if filepath.exists():
+        print(f"⚠️  News file already exists: {filepath}")
+        return filepath
+    
+    if inline:
+        content = f"""---
+title: "{display_title}"
+date: {date_str}
+inline: true
+---
+
+{message}
+"""
+    else:
+        content = f"""---
+title: "{display_title}"
+date: {date_str}
+---
+
+{message}
+"""
+    
+    filepath.write_text(content)
+    print(f"✅ Created news item: {filepath}")
+    return filepath
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Add a news item to the website")
+    parser.add_argument('message', nargs='?', help='News message (for inline news)')
+    parser.add_argument('--title', help='News title (optional)')
+    parser.add_argument('--body', help='News body (for full news posts)')
+    parser.add_argument('--full', action='store_true', help='Create a full news post (not inline)')
+    
+    args = parser.parse_args()
+    
+    if not args.message and not args.body:
+        parser.print_help()
+        print("\nExample: ./bin/add-news \"Paper accepted to NeurIPS! 🎉\"")
+        sys.exit(1)
+    
+    message = args.body if args.body else args.message
+    inline = not args.full and not args.body
+    
+    create_news(message, args.title, inline)
+    print("\n🎉 Done! Run 'hugo server' to preview changes.")
+
+
+if __name__ == '__main__':
+    main()

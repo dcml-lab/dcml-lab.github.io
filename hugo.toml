@@ -1,0 +1,78 @@
+baseURL = "https://dcml-lab.github.io/"
+languageCode = "en-us"
+title = "DCML"
+enableRobotsTXT = true
+enableGitInfo = true
+
+[params]
+  description = "Data-Centric Machine Learning Group at Harvard University"
+  longDescription = "We study how data—not just models—shapes the behavior and reliability of AI systems. Our research develops foundational principles and methods for characterizing, transforming, and optimizing datasets to make learning more efficient, interpretable, and adaptive."
+  author = "David Alvarez-Melis"
+  email = "dam@seas.harvard.edu"
+  institution = "Harvard University"
+  address = "Science and Engineering Complex, 150 Western Ave, Allston, MA 02134"
+  
+  # Social links
+  github = "dcml-harvard"
+  twitter = "elmelis"
+  
+  # Theme settings
+  colorScheme = "auto" # auto, light, dark
+  showDarkModeToggle = true
+  
+  # Homepage
+  newsLimit = 5
+  featuredPublicationsLimit = 5
+
+[markup]
+  [markup.goldmark]
+    [markup.goldmark.renderer]
+      unsafe = true
+  [markup.highlight]
+    style = "github"
+    lineNos = false
+
+[menu]
+  [[menu.main]]
+    identifier = "home"
+    name = "Home"
+    url = "/"
+    weight = 1
+  [[menu.main]]
+    identifier = "research"
+    name = "Research"
+    url = "/research/"
+    weight = 2
+  [[menu.main]]
+    identifier = "team"
+    name = "Team"
+    url = "/team/"
+    weight = 3
+  [[menu.main]]
+    identifier = "publications"
+    name = "Publications"
+    url = "/publications/"
+    weight = 4
+  [[menu.main]]
+    identifier = "blog"
+    name = "Blog"
+    url = "/blog/"
+    weight = 5
+  [[menu.main]]
+    identifier = "news"
+    name = "News"
+    url = "/news/"
+    weight = 6
+
+[outputs]
+  home = ["HTML", "RSS"]
+  section = ["HTML", "RSS"]
+
+[taxonomies]
+  tag = "tags"
+  category = "categories"
+  year = "years"
+
+[sitemap]
+  changefreq = "weekly"
+  priority = 0.5

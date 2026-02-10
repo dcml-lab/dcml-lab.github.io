@@ -1,0 +1,18 @@
+{{ $website := .Params.website }}
+{{ if $website }}
+<a href="{{ $website }}" target="_blank" rel="noopener" class="member-card">
+{{ else }}
+<div class="member-card">
+{{ end }}
+  {{ with .Params.image }}
+  <img src="{{ . | relURL }}" alt="{{ $.Title }}" class="member-card__image" loading="lazy">
+  {{ else }}
+  <img src="/img/placeholder-person.svg" alt="{{ $.Title }}" class="member-card__image" loading="lazy">
+  {{ end }}
+  <h3 class="member-card__name">{{ .Title }}</h3>
+  <p class="member-card__role">{{ .Params.role }}</p>
+{{ if $website }}
+</a>
+{{ else }}
+</div>
+{{ end }}

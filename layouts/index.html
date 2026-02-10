@@ -1,0 +1,99 @@
+{{ define "main" }}
+<section class="hero">
+  <div class="container">
+    <h1 class="hero__title">{{ .Site.Title }}</h1>
+    <p class="hero__subtitle">{{ .Site.Params.description }}</p>
+    <p class="hero__institution">
+      <i class="fas fa-university"></i>
+      {{ .Site.Params.institution }}
+    </p>
+  </div>
+</section>
+
+<!-- About Section -->
+<section class="section">
+  <div class="container container--narrow">
+    <div class="prose">
+      <p>{{ .Site.Params.longDescription }}</p>
+      <p>Our work integrates tools from <strong>optimal transport</strong>, information theory, and generative modeling, applying them across domains including scientific data, language, and vision.</p>
+    </div>
+  </div>
+</section>
+
+<!-- Latest News -->
+{{ $news := where .Site.RegularPages "Section" "news" }}
+{{ if $news }}
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Latest News</h2>
+    </div>
+    <ul class="news-list">
+      {{ range first .Site.Params.newsLimit (sort $news ".Date" "desc") }}
+      <li class="news-item">
+        <span class="news-item__date">{{ .Date.Format "Jan 2006" }}</span>
+        <div class="news-item__content">
+          {{ if .Params.inline }}
+            {{ .Content }}
+          {{ else }}
+            <a href="{{ .Permalink }}">{{ .Title }}</a>
+          {{ end }}
+        </div>
+      </li>
+      {{ end }}
+    </ul>
+    <p class="mt-lg text-center">
+      <a href="{{ "news/" | relURL }}" class="btn btn--outline">View all news</a>
+    </p>
+  </div>
+</section>
+{{ end }}
+
+<!-- Featured Research -->
+{{ $projects := where .Site.RegularPages "Section" "research" }}
+{{ if $projects }}
+<section class="section">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Research</h2>
+      <p class="section__description">Our group works on data-centric and trustworthy machine learning.</p>
+    </div>
+    <div class="team-grid">
+      {{ range first 4 $projects }}
+      <a href="{{ .Permalink }}" class="card">
+        {{ with .Params.image }}
+        <img src="{{ . | relURL }}" alt="{{ $.Title }}" class="card__image">
+        {{ end }}
+        <h3 class="card__title">{{ .Title }}</h3>
+        <p class="card__description">{{ .Description }}</p>
+      </a>
+      {{ end }}
+    </div>
+    <p class="mt-lg text-center">
+      <a href="{{ "research/" | relURL }}" class="btn btn--outline">View all research</a>
+    </p>
+  </div>
+</section>
+{{ end }}
+
+<!-- Team Preview -->
+{{ $members := where .Site.RegularPages "Section" "team" }}
+{{ $currentMembers := where $members ".Params.current" true }}
+{{ if $currentMembers }}
+<section class="section section--alt">
+  <div class="container">
+    <div class="section__header">
+      <h2 class="section__title">Team</h2>
+    </div>
+    <div class="team-grid">
+      {{ range sort $currentMembers ".Params.weight" }}
+      {{ partial "member-card.html" . }}
+      {{ end }}
+    </div>
+    <p class="mt-lg text-center">
+      <a href="{{ "team/" | relURL }}" class="btn btn--outline">View all members</a>
+    </p>
+  </div>
+</section>
+{{ end }}
+{{ end }}

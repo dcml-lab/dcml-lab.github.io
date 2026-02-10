@@ -1,0 +1,30 @@
+{{ define "main" }}
+<section class="section">
+  <div class="container">
+    <header class="section__header">
+      <h1 class="section__title">Blog</h1>
+      <p class="section__description">Thoughts, tutorials, and insights from the DCML group.</p>
+    </header>
+    
+    {{ if .Pages }}
+    {{ range sort .Pages ".Date" "desc" }}
+    <article class="card mb-lg">
+      <span class="text-muted" style="font-size: 0.85rem; font-family: var(--font-mono);">{{ .Date.Format "Jan 2, 2006" }}</span>
+      <h2 class="card__title" style="margin-top: var(--space-xs);"><a href="{{ .Permalink }}">{{ .Title }}</a></h2>
+      {{ with .Description }}<p class="card__description">{{ . }}</p>{{ end }}
+      {{ with .Summary }}<p class="card__description">{{ . }}</p>{{ end }}
+      {{ with .Params.tags }}
+      <div style="margin-top: var(--space-sm);">
+        {{ range . }}
+        <span style="background: var(--color-bg-secondary); padding: 0.2em 0.5em; border-radius: var(--radius-sm); font-size: 0.8rem; color: var(--color-text-muted);">{{ . }}</span>
+        {{ end }}
+      </div>
+      {{ end }}
+    </article>
+    {{ end }}
+    {{ else }}
+    <p class="text-muted">No blog posts yet. Check back soon!</p>
+    {{ end }}
+  </div>
+</section>
+{{ end }}

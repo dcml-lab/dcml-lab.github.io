@@ -1,0 +1,26 @@
+{{ define "main" }}
+<section class="section">
+  <div class="container">
+    <header class="section__header">
+      <h1 class="section__title">News</h1>
+      <p class="section__description">Updates from the DCML group.</p>
+    </header>
+    
+    <ul class="news-list">
+      {{ range sort .Pages ".Date" "desc" }}
+      <li class="news-item">
+        <span class="news-item__date">{{ .Date.Format "Jan 2, 2006" }}</span>
+        <div class="news-item__content">
+          {{ if .Params.inline }}
+            {{ .Content }}
+          {{ else }}
+            <a href="{{ .Permalink }}"><strong>{{ .Title }}</strong></a>
+            {{ with .Description }} — {{ . }}{{ end }}
+          {{ end }}
+        </div>
+      </li>
+      {{ end }}
+    </ul>
+  </div>
+</section>
+{{ end }}

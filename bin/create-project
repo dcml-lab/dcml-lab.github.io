@@ -1,0 +1,257 @@
+#!/usr/bin/env python3
+"""
+create-project: Create a rich project page for a paper.
+
+Usage:
+    ./bin/create-project --arxiv URL --name slug [--github URL] [--video URL]
+
+This creates a dedicated project page with:
+- Hero section with title and authors
+- Abstract
+- Method section (placeholder)
+- Results section (placeholder)
+- BibTeX citation
+
+Options:
+    --arxiv URL     arXiv paper URL (required)
+    --name SLUG     Project slug/name for URL (required)
+    --github URL    GitHub repository URL
+    --video URL     Video URL (YouTube embed URL)
+    --demo URL      Demo URL
+"""
+
+import argparse
+import re
+import sys
+import urllib.request
+import xml.etree.ElementTree as ET
+from datetime import datetime
+from pathlib import Path
+import unicodedata
+
+SCRIPT_DIR = Path(__file__).parent
+RESEARCH_DIR = SCRIPT_DIR.parent / "content" / "research"
+
+
+def slugify(text):
+    """Convert text to URL-friendly slug."""
+    text = unicodedata.normalize('NFKD', text)
+    text = text.encode('ascii', 'ignore').decode('ascii')
+    text = re.sub(r'[^\w\s-]', '', text.lower())
+    text = re.sub(r'[-\s]+', '-', text).strip('-')
+    return text
+
+
+def extract_arxiv_id(url):
+    """Extract arXiv ID from URL."""
+    patterns = [
+        r'arxiv\.org/abs/(\d+\.\d+)',
+        r'arxiv\.org/pdf/(\d+\.\d+)',
+        r'^(\d+\.\d+)$',
+    ]
+    for pattern in patterns:
+        match = re.search(pattern, url)
+        if match:
+            return match.group(1)
+    raise ValueError(f"Could not extract arXiv ID from: {url}")
+
+
+def fetch_arxiv_metadata(arxiv_id):
+    """Fetch paper metadata from arXiv API."""
+    api_url = f"http://export.arxiv.org/api/query?id_list={arxiv_id}"
+    
+    try:
+        with urllib.request.urlopen(api_url, timeout=30) as response:
+            xml_data = response.read()
+    except Exception as e:
+        raise RuntimeError(f"Failed to fetch arXiv data: {e}")
+    
+    root = ET.fromstring(xml_data)
+    ns = {'atom': 'http://www.w3.org/2005/Atom'}
+    
+    entry = root.find('atom:entry', ns)
+    if entry is None:
+        raise ValueError(f"No paper found for arXiv ID: {arxiv_id}")
+    
+    title = entry.find('atom:title', ns).text.strip()
+    title = re.sub(r'\s+', ' ', title)
+    
+    abstract = entry.find('atom:summary', ns).text.strip()
+    abstract = re.sub(r'\s+', ' ', abstract)
+    
+    authors = []
+    for author in entry.findall('atom:author', ns):
+        name = author.find('atom:name', ns).text
+        authors.append(name)
+    
+    published = entry.find('atom:published', ns).text
+    year = datetime.fromisoformat(published.replace('Z', '+00:00')).year
+    
+    return {
+        'arxiv_id': arxiv_id,
+        'title': title,
+        'authors': authors,
+        'abstract': abstract,
+        'year': year,
+        'arxiv_url': f"https://arxiv.org/abs/{arxiv_id}",
+        'pdf_url': f"https://arxiv.org/pdf/{arxiv_id}.pdf",
+    }
+
+
+def generate_bibtex(metadata, slug):
+    """Generate BibTeX entry."""
+    first_author_last = metadata['authors'][0].split()[-1]
+    bibtex_key = f"{first_author_last.lower()}{metadata['year']}{slugify(slug)[:10]}"
+    
+    authors_bibtex = " and ".join(metadata['authors'])
+    
+    return f"""  @article{{{bibtex_key},
+    title={{{metadata['title']}}},
+    author={{{authors_bibtex}}},
+    journal={{arXiv preprint arXiv:{metadata['arxiv_id']}}},
+    year={{{metadata['year']}}}
+  }}"""
+
+
+def create_project_page(metadata, name, github_url=None, video_url=None, demo_url=None):
+    """Create a project page."""
+    project_dir = RESEARCH_DIR / name
+    project_dir.mkdir(parents=True, exist_ok=True)
+    filepath = project_dir / "index.md"
+    
+    if filepath.exists():
+        print(f"⚠️  Project page already exists: {filepath}")
+        response = input("Overwrite? [y/N]: ")
+        if response.lower() != 'y':
+            return filepath
+    
+    # Format authors
+    authors_yaml = ""
+    for i, author in enumerate(metadata['authors']):
+        authors_yaml += f'  - name: "{author}"\n'
+        authors_yaml += f'    equal: {"true" if i < 2 else "false"}\n'
+    
+    bibtex = generate_bibtex(metadata, name)
+    
+    # Escape quotes in abstract
+    abstract_escaped = metadata['abstract'].replace('"', '\\"')
+    
+    content = f'''---
+title: "{metadata['title']}"
+description: "{abstract_escaped[:200]}..."
+weight: 10
+authors:
+{authors_yaml}
+affiliations:
+  - "Harvard University"
+venue: "arXiv {metadata['year']}"
+arxiv: "{metadata['arxiv_url']}"
+pdf: "{metadata['pdf_url']}"
+'''
+    
+    if github_url:
+        content += f'code: "{github_url}"\n'
+    if video_url:
+        # Convert YouTube URL to embed format if needed
+        if 'youtube.com/watch' in video_url:
+            video_id = re.search(r'v=([^&]+)', video_url)
+            if video_id:
+                video_url = f"https://www.youtube.com/embed/{video_id.group(1)}"
+        content += f'video: "{video_url}"\n'
+    if demo_url:
+        content += f'demo: "{demo_url}"\n'
+    
+    # Add teaser placeholder
+    content += '''
+teaser:
+  # video: "https://www.youtube.com/embed/VIDEO_ID"  # Uncomment for video teaser
+  # image: "/img/projects/teaser.png"  # Or use image
+  # caption: "Brief description of the teaser"
+'''
+    
+    content += f'''
+abstract: |
+  {metadata['abstract']}
+
+bibtex: |
+  {bibtex}
+
+acknowledgments: |
+  We thank ... for helpful discussions. This work was supported by ...
+---
+
+## Overview
+
+*Brief overview of the paper and its contributions.*
+
+![Method Overview](/img/projects/{name}/method.png)
+
+## Key Contributions
+
+1. **Contribution 1** - Description
+2. **Contribution 2** - Description
+3. **Contribution 3** - Description
+
+## Method
+
+*Detailed description of the method.*
+
+## Results
+
+*Key experimental results and visualizations.*
+
+### Quantitative Results
+
+| Method | Metric 1 | Metric 2 |
+|--------|----------|----------|
+| Baseline | X.XX | X.XX |
+| Ours | **X.XX** | **X.XX** |
+
+### Qualitative Results
+
+*Add figures and visualizations here.*
+'''
+    
+    filepath.write_text(content)
+    print(f"✅ Created project page: {filepath}")
+    
+    # Create images directory
+    img_dir = SCRIPT_DIR.parent / "static" / "img" / "projects" / name
+    img_dir.mkdir(parents=True, exist_ok=True)
+    print(f"📁 Created image directory: {img_dir}")
+    
+    return filepath
+
+
+def main():
+    parser = argparse.ArgumentParser(description="Create a project page for a paper")
+    parser.add_argument('--arxiv', required=True, help='arXiv URL or ID')
+    parser.add_argument('--name', required=True, help='Project slug for URL')
+    parser.add_argument('--github', help='GitHub repository URL')
+    parser.add_argument('--video', help='Video URL (YouTube)')
+    parser.add_argument('--demo', help='Demo URL')
+    
+    args = parser.parse_args()
+    
+    try:
+        arxiv_id = extract_arxiv_id(args.arxiv)
+        print(f"📄 Fetching metadata for arXiv:{arxiv_id}...")
+        
+        metadata = fetch_arxiv_metadata(arxiv_id)
+        print(f"   Title: {metadata['title']}")
+        print(f"   Authors: {', '.join(metadata['authors'][:3])}{'...' if len(metadata['authors']) > 3 else ''}")
+        
+        create_project_page(metadata, args.name, args.github, args.video, args.demo)
+        
+        print(f"\n🎉 Done! Project page created at /research/{args.name}/")
+        print(f"   Edit content/research/{args.name}/index.md to customize.")
+        print(f"   Add images to static/img/projects/{args.name}/")
+        print("\nRun 'hugo server' to preview changes.")
+        
+    except Exception as e:
+        print(f"❌ Error: {e}", file=sys.stderr)
+        sys.exit(1)
+
+
+if __name__ == '__main__':
+    main()

@@ -1,0 +1,31 @@
+<header class="header">
+  <nav class="nav container">
+    <a href="{{ .Site.BaseURL }}" class="nav__logo">
+      <img src="/img/favicon.svg" alt="" class="nav__logo-icon" style="width: 1.5rem; height: 1.5rem;">
+      <span class="nav__logo-text">{{ .Site.Title }}</span>
+    </a>
+    
+    <button class="nav__toggle" aria-label="Toggle menu" aria-expanded="false">
+      <span class="nav__toggle-bar"></span>
+      <span class="nav__toggle-bar"></span>
+      <span class="nav__toggle-bar"></span>
+    </button>
+    
+    <div class="nav__menu">
+      <ul class="nav__list">
+        {{ range .Site.Menus.main }}
+        <li class="nav__item">
+          <a href="{{ .URL }}" class="nav__link {{ if $.IsMenuCurrent "main" . }}nav__link--active{{ end }}">
+            {{ .Name }}
+          </a>
+        </li>
+        {{ end }}
+      </ul>
+      
+      <button class="theme-toggle" aria-label="Toggle dark mode">
+        <i class="fas fa-sun theme-toggle__icon theme-toggle__icon--light"></i>
+        <i class="fas fa-moon theme-toggle__icon theme-toggle__icon--dark"></i>
+      </button>
+    </div>
+  </nav>
+</header>

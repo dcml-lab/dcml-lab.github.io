@@ -1,0 +1,123 @@
+{{ define "main" }}
+<!-- Project Hero -->
+<section class="project-hero">
+  <div class="container">
+    <h1 class="project-hero__title">{{ .Title }}</h1>
+    
+    {{ with .Params.authors }}
+    <p class="project-hero__authors">
+      {{ range $i, $author := . }}{{ if $i }}, {{ end }}{{ with $author.url }}<a href="{{ . }}" target="_blank" rel="noopener">{{ end }}{{ $author.name }}{{ if $author.equal }}*{{ end }}{{ with $author.url }}</a>{{ end }}{{ end }}
+    </p>
+    {{ end }}
+    
+    {{ with .Params.affiliations }}
+    <p class="project-hero__affiliations">
+      {{ range $i, $aff := . }}{{ if $i }} · {{ end }}{{ $aff }}{{ end }}
+    </p>
+    {{ end }}
+    
+    {{ with .Params.venue }}
+    <p class="project-hero__affiliations" style="font-weight: 500; margin-top: var(--space-sm);">
+      {{ . }}
+    </p>
+    {{ end }}
+    
+    <div class="project-hero__links">
+      {{ with .Params.arxiv }}
+      <a href="{{ . }}" target="_blank" rel="noopener" class="btn">
+        <i class="ai ai-arxiv"></i> arXiv
+      </a>
+      {{ end }}
+      {{ with .Params.pdf }}
+      <a href="{{ . }}" target="_blank" rel="noopener" class="btn">
+        <i class="fas fa-file-pdf"></i> PDF
+      </a>
+      {{ end }}
+      {{ with .Params.code }}
+      <a href="{{ . }}" target="_blank" rel="noopener" class="btn btn--outline">
+        <i class="fab fa-github"></i> Code
+      </a>
+      {{ end }}
+      {{ with .Params.video }}
+      <a href="{{ . }}" target="_blank" rel="noopener" class="btn btn--outline">
+        <i class="fas fa-video"></i> Video
+      </a>
+      {{ end }}
+      {{ with .Params.demo }}
+      <a href="{{ . }}" target="_blank" rel="noopener" class="btn btn--outline">
+        <i class="fas fa-play-circle"></i> Demo
+      </a>
+      {{ end }}
+    </div>
+  </div>
+</section>
+
+<!-- Teaser Image/Video -->
+{{ with .Params.teaser }}
+<section class="section" style="padding-top: var(--space-xl);">
+  <div class="container container--narrow">
+    {{ if .video }}
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: var(--radius-lg);">
+      <iframe src="{{ .video }}" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0;" allowfullscreen></iframe>
+    </div>
+    {{ else if .image }}
+    <img src="{{ .image | relURL }}" alt="{{ $.Title }}" style="width: 100%; border-radius: var(--radius-lg);">
+    {{ end }}
+    {{ with .caption }}
+    <p class="text-center text-muted mt-lg" style="font-size: 0.9rem;">{{ . }}</p>
+    {{ end }}
+  </div>
+</section>
+{{ end }}
+
+<!-- Abstract -->
+{{ with .Params.abstract }}
+<section class="project-section">
+  <div class="container container--narrow">
+    <h2 class="project-section__title">Abstract</h2>
+    <div class="prose">
+      <p>{{ . }}</p>
+    </div>
+  </div>
+</section>
+{{ end }}
+
+<!-- Main Content -->
+{{ if .Content }}
+<section class="project-section">
+  <div class="container container--narrow">
+    <div class="prose">
+      {{ .Content }}
+    </div>
+  </div>
+</section>
+{{ end }}
+
+<!-- BibTeX -->
+{{ with .Params.bibtex }}
+<section class="project-section" style="background: var(--color-bg-secondary);">
+  <div class="container container--narrow">
+    <h2 class="project-section__title">Citation</h2>
+    <div class="bibtex">
+      <div class="bibtex__header">
+        <span class="bibtex__title">BibTeX</span>
+        <button class="bibtex__copy">Copy</button>
+      </div>
+      <pre class="bibtex__code">{{ . }}</pre>
+    </div>
+  </div>
+</section>
+{{ end }}
+
+<!-- Acknowledgments -->
+{{ with .Params.acknowledgments }}
+<section class="project-section">
+  <div class="container container--narrow">
+    <h2 class="project-section__title">Acknowledgments</h2>
+    <div class="prose">
+      <p>{{ . }}</p>
+    </div>
+  </div>
+</section>
+{{ end }}
+{{ end }}

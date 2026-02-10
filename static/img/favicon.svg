@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32">
+  <!-- Database/Data cylinder icon -->
+  <ellipse cx="16" cy="6" rx="12" ry="4" fill="#2563eb"/>
+  <path d="M4 6v20c0 2.2 5.4 4 12 4s12-1.8 12-4V6" fill="none" stroke="#2563eb" stroke-width="2"/>
+  <ellipse cx="16" cy="26" rx="12" ry="4" fill="none" stroke="#2563eb" stroke-width="2"/>
+  <ellipse cx="16" cy="14" rx="12" ry="4" fill="none" stroke="#2563eb" stroke-width="1.5" opacity="0.6"/>
+  <ellipse cx="16" cy="20" rx="12" ry="4" fill="none" stroke="#2563eb" stroke-width="1.5" opacity="0.6"/>
+</svg>

@@ -1,0 +1,102 @@
+{{ define "main" }}
+<section class="section">
+  <div class="container">
+    <header class="section__header">
+      <h1 class="section__title">Team</h1>
+      <p class="section__description">Meet the members of the DCML group.</p>
+    </header>
+    
+    {{ $members := .Pages }}
+    
+    <!-- PI -->
+    {{ $pi := where $members ".Params.role" "PI" }}
+    {{ if $pi }}
+    <div class="mb-lg">
+      <h2 class="section__title" style="font-size: 1.25rem;">Principal Investigator</h2>
+      <div class="team-grid">
+        {{ range $pi }}
+        {{ partial "member-card.html" . }}
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+    
+    <!-- Current Members by Category -->
+    {{ $current := where $members ".Params.current" true }}
+    {{ $currentNonPI := where $current ".Params.role" "!=" "PI" }}
+    
+    {{ $postdocs := where $currentNonPI ".Params.category" "postdoc" }}
+    {{ if $postdocs }}
+    <div class="mb-lg">
+      <h2 class="section__title" style="font-size: 1.25rem;">Postdoctoral Researchers</h2>
+      <div class="team-grid">
+        {{ range $postdocs }}
+        {{ partial "member-card.html" . }}
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+    
+    {{ $phd := where $currentNonPI ".Params.category" "phd" }}
+    {{ if $phd }}
+    <div class="mb-lg">
+      <h2 class="section__title" style="font-size: 1.25rem;">PhD Students</h2>
+      <div class="team-grid">
+        {{ range sort $phd ".Params.since" }}
+        {{ partial "member-card.html" . }}
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+    
+    {{ $masters := where $currentNonPI ".Params.category" "masters" }}
+    {{ if $masters }}
+    <div class="mb-lg">
+      <h2 class="section__title" style="font-size: 1.25rem;">Masters Students</h2>
+      <div class="team-grid">
+        {{ range $masters }}
+        {{ partial "member-card.html" . }}
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+    
+    {{ $undergrad := where $currentNonPI ".Params.category" "undergrad" }}
+    {{ if $undergrad }}
+    <div class="mb-lg">
+      <h2 class="section__title" style="font-size: 1.25rem;">Undergraduate Students</h2>
+      <div class="team-grid">
+        {{ range $undergrad }}
+        {{ partial "member-card.html" . }}
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+    
+    {{ $visiting := where $currentNonPI ".Params.category" "visiting" }}
+    {{ if $visiting }}
+    <div class="mb-lg">
+      <h2 class="section__title" style="font-size: 1.25rem;">Visiting Researchers</h2>
+      <div class="team-grid">
+        {{ range $visiting }}
+        {{ partial "member-card.html" . }}
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+    
+    <!-- Alumni -->
+    {{ $alumni := where $members ".Params.current" false }}
+    {{ if $alumni }}
+    <div class="mt-lg">
+      <h2 class="section__title" style="font-size: 1.25rem;">Alumni</h2>
+      <div class="team-grid">
+        {{ range sort $alumni ".Params.since" "desc" }}
+        {{ partial "member-card.html" . }}
+        {{ end }}
+      </div>
+    </div>
+    {{ end }}
+  </div>
+</section>
+{{ end }}

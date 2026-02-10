@@ -1,0 +1,24 @@
+{{ define "main" }}
+<section class="section">
+  <div class="container">
+    <header class="section__header">
+      <h1 class="section__title">Research</h1>
+      <p class="section__description">Explore our research areas and featured projects.</p>
+    </header>
+    
+    {{ .Content }}
+    
+    <div class="team-grid">
+      {{ range sort .Pages ".Params.weight" }}
+      <a href="{{ .Permalink }}" class="card">
+        {{ with .Params.image }}
+        <img src="{{ . | relURL }}" alt="{{ $.Title }}" style="width: 100%; border-radius: var(--radius-md); margin-bottom: var(--space-md);">
+        {{ end }}
+        <h3 class="card__title">{{ .Title }}</h3>
+        <p class="card__description">{{ .Description }}</p>
+      </a>
+      {{ end }}
+    </div>
+  </div>
+</section>
+{{ end }}
