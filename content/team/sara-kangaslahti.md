@@ -4,7 +4,7 @@ role: "PhD Student"
 category: "phd"
 since: 2023
 current: true
-weight: 10
+weight: 12
 image: "/img/team/sara-kangaslahti.jpg"
 website: "https://skangasl.github.io/"
 ---

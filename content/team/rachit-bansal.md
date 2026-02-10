@@ -4,7 +4,7 @@ role: "PhD Student"
 category: "phd"
 since: 2024
 current: true
-weight: 35
+weight: 20
 image: "/img/team/rachit-bansal.png"
 website: "https://rachitbansal.github.io/"
 scholar: "https://scholar.google.com/citations?user=7-x28WYAAAAJ"
