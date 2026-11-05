@@ -1,5 +1,5 @@
 ---
-title: "A Label is Worth a Thousand Images in Dataset Distillation"
+title: "A Label is Worth A Thousand Images in Dataset Distillation"
 authors: "Tian Qin, Zhiwei Deng, David Alvarez-Melis"
 venue: "NeurIPS"
 year: 2024
@@ -13,9 +13,14 @@ abstract: |
   Data quality is a crucial factor in the performance of machine learning models, a principle that dataset distillation methods exploit by compressing training datasets into much smaller counterparts that maintain similar downstream performance. Understanding how and why data distillation methods work is vital not only for improving these methods but also for revealing fundamental characteristics of "good" training data. In this work, we highlight a largely overlooked aspect common to most of these methods: the use of soft (probabilistic) labels. Through a series of ablation experiments, we study the role of soft labels in depth. Our results reveal that the main factor explaining the performance of state-of-the-art distillation methods is not the specific techniques used to generate synthetic data but rather the use of soft labels.
 bibtex: |
   @inproceedings{qin2024label,
-    title={A Label is Worth a Thousand Images in Dataset Distillation},
-    author={Qin, Tian and Deng, Zhiwei and Alvarez-Melis, David},
-    booktitle={Advances in Neural Information Processing Systems},
-    year={2024}
+    title         = {A Label is Worth A Thousand Images in Dataset Distillation},
+    author        = {Qin, Tian and Deng, Zhiwei and Alvarez-Melis, David},
+    booktitle     = {Advances in Neural Information Processing Systems},
+    volume        = {37},
+    publisher     = {Curran Associates},
+    year          = {2024},
+    eprint        = {2406.10485},
+    archivePrefix = {arXiv},
+    url           = {https://arxiv.org/abs/2406.10485}
   }
 ---

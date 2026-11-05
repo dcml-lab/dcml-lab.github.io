@@ -11,11 +11,18 @@ summary: "How do you compute optimal transport when your representations are onl
 abstract: |
   Many problems in machine learning involve calculating correspondences between sets of objects, such as point clouds or images. Discrete optimal transport provides a natural and successful approach to such tasks whenever the two sets of objects can be represented in the same space, or at least distances between them can be directly evaluated. Unfortunately neither requirement is likely to hold when object representations are learned from data. Indeed, automatically derived representations such as word embeddings are typically fixed only up to some global transformations, for example, reflection or rotation. As a result, pairwise distances across two such instances are ill-defined without specifying their relative transformation. In this work, we propose a general framework for optimal transport in the presence of latent global transformations.
 bibtex: |
-  @inproceedings{alvarez2019towards,
-    title={Towards Optimal Transport with Global Invariances},
-    author={Alvarez-Melis, David and Jegelka, Stefanie and Jaakkola, Tommi S},
-    booktitle={International Conference on Artificial Intelligence and Statistics},
-    pages={1870--1879},
-    year={2019}
+  @inproceedings{alvarez-melis2019towards,
+    title         = {{Towards Optimal Transport with Global Invariances}},
+    author        = {Alvarez-Melis, David and Jegelka, Stefanie and Jaakkola, Tommi S.},
+    booktitle     = {Proceedings of the Twenty-Second International Conference on Artificial Intelligence and Statistics},
+    volume        = {89},
+    pages         = {1870--1879},
+    publisher     = {PMLR},
+    series        = {Proceedings of Machine Learning Research},
+    year          = {2019},
+    eprint        = {1806.09277},
+    archivePrefix = {arXiv},
+    url           = {https://arxiv.org/abs/1806.09277}
   }
+arxiv: "https://arxiv.org/abs/1806.09277"
 ---

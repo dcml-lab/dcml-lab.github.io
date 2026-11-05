@@ -11,12 +11,19 @@ summary: "We cast dataset transformation as optimization in probability space, u
 abstract: |
   Various machine learning tasks, from generative modeling to domain adaptation, revolve around the concept of dataset transformation and manipulation. While various methods exist for transforming unlabeled datasets, principled methods to do so for labeled (e.g., classification) datasets are missing. In this work, we propose a novel framework for dataset transformation, which we cast as optimization over data-generating joint probability distributions. We approach this class of problems through Wasserstein gradient flows in probability space, and derive practical and efficient particle-based methods for a flexible but well-behaved class of objective functions. Through various experiments, we show that this framework can be used to impose constraints on classification datasets, adapt them for transfer learning, or to re-purpose fixed or black-box models to classify—with high accuracy—previously unseen datasets.
 bibtex: |
-  @inproceedings{alvarez2021dataset,
-    title={Dataset Dynamics via Gradient Flows in Probability Space},
-    author={Alvarez-Melis, David and Fusi, Nicol{\`o}},
-    booktitle={International Conference on Machine Learning},
-    pages={219--230},
-    year={2021},
-    organization={PMLR}
+  @inproceedings{alvarez-melis2021dataset,
+    title         = {Dataset Dynamics via Gradient Flows in Probability Space},
+    author        = {Alvarez-Melis, David and Fusi, Nicolò},
+    booktitle     = {Proceedings of the 38th International Conference on Machine Learning},
+    volume        = {139},
+    pages         = {219--230},
+    publisher     = {PMLR},
+    series        = {Proceedings of Machine Learning Research},
+    year          = {2021},
+    eprint        = {2010.12760},
+    archivePrefix = {arXiv},
+    url           = {https://arxiv.org/abs/2010.12760}
   }
+arxiv: "https://arxiv.org/abs/2010.12760"
+code: "https://github.com/microsoft/otdd"
 ---

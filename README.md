@@ -21,6 +21,8 @@ hugo --gc --minify
 
 ### Add a Publication from arXiv
 
+> **Citation fields are synced from David's master publication list** (`~/workspace/publications/pubs.bib`). `make dotml` there overwrites `title`, `authors`, `venue`, `year`, `arxiv`, `code` and `bibtex` on every page it matches, so fix those fields in the master, not here. Summaries, abstracts, images and other links stay hand-curated. After creating a page with `add-paper`, run `make dotml` to replace its arXiv-derived metadata with the verified entry.
+
 ```bash
 # Basic usage
 ./bin/add-paper --arxiv https://arxiv.org/abs/2309.12345

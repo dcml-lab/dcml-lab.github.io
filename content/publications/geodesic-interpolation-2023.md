@@ -11,9 +11,16 @@ abstract: |
   Data for pretraining machine learning models often consists of collections of heterogeneous datasets. Although training on their union is reasonable in agnostic settings, it might be suboptimal when the target domain—where the model will ultimately be used—is known in advance. In that case, one would ideally pretrain only on the dataset(s) most similar to the target one. Instead of limiting this choice to those datasets already present in the pretraining collection, here we explore extending this search to all datasets that can be synthesized as 'combinations' of them. We define such combinations as multi-dataset interpolations, formalized through the notion of generalized geodesics from optimal transport (OT) theory. We compute these geodesics using a recent notion of distance between labeled datasets, and derive alternative interpolation schemes based on it: using either barycentric projections or optimal transport maps, the latter computed using recent neural OT methods.
 bibtex: |
   @inproceedings{fan2023generating,
-    title={Generating Synthetic Datasets by Interpolating along Generalized Geodesics},
-    author={Fan, Jiaojiao and Alvarez-Melis, David},
-    booktitle={Conference on Uncertainty in Artificial Intelligence},
-    year={2023}
+    title         = {Generating Synthetic Datasets by Interpolating along Generalized Geodesics},
+    author        = {Fan, Jiaojiao and Alvarez-Melis, David},
+    booktitle     = {Proceedings of the Thirty-Ninth Conference on Uncertainty in Artificial Intelligence},
+    volume        = {216},
+    pages         = {571--581},
+    publisher     = {PMLR},
+    series        = {Proceedings of Machine Learning Research},
+    year          = {2023},
+    eprint        = {2306.06866},
+    archivePrefix = {arXiv},
+    url           = {https://arxiv.org/abs/2306.06866}
   }
 ---

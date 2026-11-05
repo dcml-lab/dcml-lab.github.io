@@ -12,10 +12,16 @@ summary: "We extend Deep Equilibrium Models to handle sets and point clouds by f
 abstract: |
   Deep Equilibrium Models (DEQs) are a class of implicit neural networks that solve for a fixed point of a neural network in their forward pass. Traditionally, DEQs take sequences as inputs, but have since been applied to a variety of data. In this work, we present Distributional Deep Equilibrium Models (DDEQs), extending DEQs to discrete measure inputs, such as sets or point clouds. We provide a theoretically grounded framework for DDEQs. Leveraging Wasserstein gradient flows, we show how the forward pass of the DEQ can be adapted to find fixed points of discrete measures under permutation-invariance, and derive adequate network architectures for DDEQs. In experiments, we show that they can compete with state-of-the-art models in tasks such as point cloud classification and point cloud completion, while being significantly more parameter-efficient.
 bibtex: |
-  @inproceedings{geuter2025ddeqs,
-    title={DDEQs: Distributional Deep Equilibrium Models through Wasserstein Gradient Flows},
-    author={Geuter, Jonathan and Bonet, Cl{\'e}ment and Korba, Anna and Alvarez-Melis, David},
-    booktitle={International Conference on Artificial Intelligence and Statistics},
-    year={2025}
+  @inproceedings{geuter2025distributional,
+    title         = {{DDEQs}: Distributional Deep Equilibrium Models through {Wasserstein} Gradient Flows},
+    author        = {Geuter, Jonathan and Bonet, Clément and Korba, Anna and Alvarez-Melis, David},
+    booktitle     = {Proceedings of The 28th International Conference on Artificial Intelligence and Statistics},
+    volume        = {258},
+    publisher     = {PMLR},
+    series        = {Proceedings of Machine Learning Research},
+    year          = {2025},
+    eprint        = {2503.01140},
+    archivePrefix = {arXiv},
+    url           = {https://arxiv.org/abs/2503.01140}
   }
 ---

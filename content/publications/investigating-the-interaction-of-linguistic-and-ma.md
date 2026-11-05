@@ -11,9 +11,13 @@ abstract: |
   Across languages, numeral systems vary widely in how they construct and combine numbers. While humans consistently learn to navigate this diversity, large language models (LLMs) struggle with linguistic-mathematical puzzles involving cross-linguistic numeral systems, which humans can learn to solve successfully. We investigate why this task is difficult for LLMs through a series of experiments that untangle the linguistic and mathematical aspects of numbers in language. Our experiments establish that models cannot consistently solve such problems unless the mathematical operations in the problems are explicitly marked using known symbols (+, ×, etc.).
 bibtex: |
   @inproceedings{bhattacharya2025investigating,
-    title={Investigating the interaction of linguistic and mathematical reasoning in language models using multilingual number puzzles},
-    author={Bhattacharya, Antara Raaghavi and Papadimitriou, Isabel and Davidson, Kathryn and Alvarez-Melis, David},
-    booktitle={Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing},
-    year={2025}
+    title         = {Investigating the interaction of linguistic and mathematical reasoning in language models using multilingual number puzzles},
+    author        = {Bhattacharya, Antara Raaghavi and Papadimitriou, Isabel and Davidson, Kathryn and Alvarez-Melis, David},
+    booktitle     = {Proceedings of the 2025 Conference on Empirical Methods in Natural Language Processing},
+    pages         = {28322--28332},
+    year          = {2025},
+    eprint        = {2506.13886},
+    archivePrefix = {arXiv},
+    url           = {https://arxiv.org/abs/2506.13886}
   }
 ---
